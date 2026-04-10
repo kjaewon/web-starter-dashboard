@@ -1,0 +1,69 @@
+{
+  "theme": "dark",
+  "background": {
+    "unsplashQuery": "nature,landscape,workstation",
+    "refreshIntervalMinutes": 60
+  },
+  "search": {
+    "engines": [
+      {
+        "id": "google",
+        "name": "Google",
+        "url": "https://www.google.com/search?q="
+      },
+      {
+        "id": "naver",
+        "name": "Naver",
+        "url": "https://search.naver.com/search.naver?query="
+      },
+      {
+        "id": "youtube",
+        "name": "YouTube",
+        "url": "https://www.youtube.com/results?search_query="
+      }
+    ],
+    "defaultEngineId": "google"
+  },
+  "bookmarks": [
+    {
+      "groupId": "work",
+      "groupName": "업무 세션",
+      "items": [
+        { "name": "Gmail", "url": "https://mail.google.com" },
+        { "name": "GitHub", "url": "https://github.com" },
+        { "name": "Slack", "url": "https://app.slack.com" }
+      ]
+    },
+    {
+      "groupId": "study",
+      "groupName": "개발 공부",
+      "items": [
+        { "name": "MDN Web Docs", "url": "https://developer.mozilla.org" },
+        { "name": "StackOverflow", "url": "https://stackoverflow.com" }
+      ]
+    },
+    {
+      "groupId": "news",
+      "groupName": "뉴스 서핑",
+      "items": [
+        { "name": "HackerNews", "url": "https://news.ycombinator.com" },
+        { "name": "TechCrunch", "url": "https://techcrunch.com" }
+      ]
+    }
+  ],
+  "weather": {
+    "enabled": true,
+    "apiKey": "DEMO_KEY",
+    "city": "Seoul",
+    "units": "metric"
+  },
+  "rss": {
+    "enabled": true,
+    "feeds": [
+      {
+        "name": "TechNews",
+        "url": "https://news.google.com/rss/search?q=technology&hl=ko&gl=KR&ceid=KR:ko"
+      }
+    ]
+  }
+}

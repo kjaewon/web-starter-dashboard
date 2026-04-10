@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Personal Productivity Landing Page">
+  <title>My Dashboard</title>
+  
+  <link rel="manifest" href="./manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="dark-mode" id="app-body">
+  
+  <!-- Dynamic Background will be applied here via JS -->
+  <div id="bg-overlay" class="bg-overlay"></div>
+
+  <!-- Login Modal overlay -->
+  <div id="login-modal" class="login-modal">
+    <div class="glass-panel login-panel">
+      <h2 style="margin-bottom:1rem; text-align:center;">Welcome</h2>
+      <p style="text-align:center; color:var(--text-muted); margin-bottom:2rem;">Please sign in to access your dashboard.</p>
+      <button id="btn-google-login" class="btn-primary" style="width: 100%;">Sign in with Google</button>
+    </div>
+  </div>
+
+  <!-- Settings Modal popup -->
+  <div id="settings-modal" class="settings-modal">
+    <div class="glass-panel settings-panel" style="max-height:80vh; display:flex; flex-direction:column;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h2 style="margin:0;">Settings</h2>
+        <button id="btn-settings-close-top" class="btn-icon" style="color:var(--text-color);">&times;</button>
+      </div>
+      
+      <!-- Settings Tabs Header -->
+      <div class="settings-tabs">
+        <button class="tab-btn active" data-target="tab-general">General</button>
+        <button class="tab-btn" data-target="tab-workspaces">Workspaces</button>
+      </div>
+
+      <!-- Tab Contents Container (Scrollable) -->
+      <div class="settings-content" style="flex:1; overflow-y:auto; padding-right:0.5rem;">
+        
+        <!-- Tab: General -->
+        <div id="tab-general" class="tab-pane active">
+          <div style="margin-bottom:1rem;">
+            <label style="display:block; margin-bottom:0.5rem; font-size:0.9rem;">Background Keyword</label>
+            <input type="text" id="setting-bg-keyword" class="search-input" style="width:100%;" placeholder="nature, city...">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="display:block; margin-bottom:0.5rem; font-size:0.9rem;">Weather City</label>
+            <input type="text" id="setting-weather-city" class="search-input" style="width:100%;" placeholder="Seoul">
+          </div>
+        </div>
+
+        <!-- Tab: Workspaces -->
+        <div id="tab-workspaces" class="tab-pane">
+          <div style="margin-bottom:1rem;">
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;">Manage your bookmark groups and links. Dragging is not supported yet.</p>
+            <div id="workspaces-editor-container" style="display:flex; flex-direction:column; gap:1rem;">
+              <!-- Groups will be injected here via JS -->
+            </div>
+            <button id="btn-add-group" class="btn-secondary" style="margin-top:1rem; width:100%;">+ Add New Group</button>
+          </div>
+        </div>
+
+      </div> <!-- End of content -->
+
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.1);">
+        <button id="btn-settings-close" class="btn-secondary">Cancel</button>
+        <button id="btn-settings-save" class="btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="header glass-panel">
+    <div class="header-left">
+      <h1 class="logo-title">Welcome Back.</h1>
+      <span class="greeting" id="greeting-text">Ready to focus?</span>
+    </div>
+
+    <!-- Theme & Auth Controls -->
+    <div class="header-right" style="display:flex; gap:0.5rem; align-items:center;">
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle Theme">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+      <button id="btn-settings" class="btn-icon" aria-label="Settings">⚙️</button>
+      <button id="btn-logout" class="glass-button" style="font-size:0.8rem; margin-left:0.5rem;">Logout</button>
+    </div>
+  </header>
+
+  <main class="dashboard-grid">
+    
+    <!-- Top Section: Search & Time/Weather -->
+    <section class="top-bar">
+      <!-- Info Widget: Clock and Weather -->
+      <div id="info-widget" class="glass-panel info-widget widget-draggable" draggable="true">
+        <div class="clock-display">
+          <div id="time-display" class="time-text">00:00</div>
+          <div id="date-display" class="date-text">Mon, Jan 1</div>
+        </div>
+        <div class="weather-display" id="weather-container">
+          <span class="weather-icon" id="weather-icon">☁️</span>
+          <span class="weather-temp" id="weather-temp">--°C</span>
+          <span class="weather-desc" id="weather-desc">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Integrated Search -->
+      <div id="search-widget" class="glass-panel search-widget widget-draggable" draggable="true">
+        <form id="search-form" class="search-form">
+          <select id="search-engine-select" class="search-engine-select" aria-label="Select Search Engine">
+            <!-- Populated via JS -->
+          </select>
+          <input type="text" id="search-input" class="search-input" placeholder="Search the web..." autocomplete="off" autofocus>
+          <button type="submit" class="btn-search">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Middle Section: Bookmarks, Todo, Pomodoro -->
+    <section class="main-widgets-grid">
+      
+      <!-- Bookmarks / Workspace -->
+      <div id="bookmarks-widget" class="glass-panel bookmarks-widget widget-draggable" draggable="true">
+        <h2>Workspaces</h2>
+        <div id="bookmarks-container" class="bookmarks-container">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- ToDo List -->
+      <div id="todo-widget" class="glass-panel todo-widget widget-draggable" draggable="true">
+        <h2>Top 3 Priorities</h2>
+        <ul id="todo-list" class="todo-list">
+          <!-- Populated via JS -->
+        </ul>
+        <form id="todo-form" class="todo-form">
+          <input type="text" id="todo-input" placeholder="What's the main focus today?" maxlength="60" autocomplete="off">
+          <button type="submit" class="btn-add">+</button>
+        </form>
+      </div>
+
+      <!-- Pomodoro Timer -->
+      <div id="pomodoro-widget" class="glass-panel pomodoro-widget widget-draggable" draggable="true">
+        <h2>Pomodoro</h2>
+        <div class="pomodoro-display">
+          <button id="pomo-decrease" class="btn-icon pomo-adj-btn" aria-label="Decrease time">-</button>
+          <span id="pomodoro-time">25:00</span>
+          <button id="pomo-increase" class="btn-icon pomo-adj-btn" aria-label="Increase time">+</button>
+        </div>
+        <div class="pomodoro-controls">
+          <button id="pomo-start" class="btn-primary">Start</button>
+          <button id="pomo-pause" class="btn-secondary">Pause</button>
+          <button id="pomo-reset" class="btn-secondary">Reset</button>
+        </div>
+      </div>
+
+      <!-- Efficiency Score -->
+      <div id="efficiency-widget" class="glass-panel widget-draggable" draggable="true" style="display:flex; flex-direction:column; align-items:center;">
+        <h2 style="align-self:flex-start;">Efficiency</h2>
+        <div class="efficiency-ring-container">
+          <svg class="efficiency-svg" viewBox="0 0 100 100">
+            <circle class="ring-bg" cx="50" cy="50" r="40" />
+            <circle class="ring-progress" id="eff-progress" cx="50" cy="50" r="40" />
+          </svg>
+          <div class="efficiency-score">
+            <span id="eff-value">0%</span>
+            <small>Today</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deep Work -->
+      <div id="deepwork-widget" class="glass-panel widget-draggable" draggable="true">
+        <h2>Deep Work<span style="font-size:0.8rem; font-weight:normal; float:right; opacity:0.7;">This Week</span></h2>
+        <div class="deepwork-chart">
+          <!-- Mon-Sun bars via JS -->
+          <div class="dw-bars" id="dw-bars-container"></div>
+          <div class="dw-labels" id="dw-labels-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Section: RSS Feed -->
+    <section class="bottom-section">
+      <div id="rss-widget" class="glass-panel rss-widget widget-draggable" draggable="true">
+        <h2>Latest Headlines</h2>
+        <ul id="rss-feed-list" class="rss-feed-list">
+          <li class="loading-text">Loading feeds...</li>
+        </ul>
+      </div>
+    </section>
+    
+  </main>
+
+  <script type="module" src="./js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Reg failed', err));
+      });
+    }
+  </script>
+</body>
+</html>
