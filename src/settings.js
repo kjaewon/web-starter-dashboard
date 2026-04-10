@@ -38,21 +38,24 @@ export async function initSettings(user) {
 
 export async function saveSettings(newConfig) {
   window.appConfig = newConfig;
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
   
-  if (user) {
-    const { data, error } = await supabase
-      .from('user_settings')
-      .update({ config: newConfig })
-      .eq('user_id', user.id)
-      .select();
-      
-    if (error) {
-      alert('DB 저장 에러:\n' + error.message);
-    } else if (!data || data.length === 0) {
-      // 0 rows updated means row doesn't exist or RLS blocked update
-      alert('저장 실패: 테이블에 현재 사용자의 행이 없거나 권한이 막혀있습니다.');
-    }
+  if (authError || !user) {
+    alert('로그인 세션이 만료되거나 확인할 수 없습니다. 다시 로그인 해주세요.');
+    return;
+  }
+  
+  const { data, error } = await supabase
+    .from('user_settings')
+    .update({ config: newConfig })
+    .eq('user_id', user.id)
+    .select();
+    
+  if (error) {
+    alert('DB 저장 에러:\n' + error.message);
+  } else if (!data || data.length === 0) {
+    // 0 rows updated means row doesn't exist or RLS blocked update
+    alert('저장 실패: 테이블에 현재 사용자의 행이 없거나 권한(RLS)이 막혀있습니다.');
   }
 }
 
