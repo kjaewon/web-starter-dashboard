@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const inputBg = document.getElementById('setting-bg-keyword');
   const inputCity = document.getElementById('setting-weather-city');
+  const inputWeatherApi = document.getElementById('setting-weather-api-key');
 
   // Tabs
   const tabBtns = document.querySelectorAll('.tab-btn');
@@ -170,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
   btnOpen?.addEventListener('click', () => {
     inputBg.value = window.appConfig?.background?.unsplashQuery || 'nature';
     inputCity.value = window.appConfig?.weather?.city || 'Seoul';
+    inputWeatherApi.value = window.appConfig?.weather?.apiKey === 'DEMO_KEY' ? '' : (window.appConfig?.weather?.apiKey || '');
     renderWorkspacesEditor();
     
     // Switch to first tab by default
@@ -189,6 +191,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if(!window.appConfig.weather) window.appConfig.weather = {};
     window.appConfig.weather.city = inputCity.value;
+    
+    // Fallback securely so we don't save empty string and ruin defaults completely unless user empties it
+    if (inputWeatherApi.value.trim() !== '') {
+      window.appConfig.weather.apiKey = inputWeatherApi.value.trim();
+    } else if (window.appConfig.weather.apiKey !== 'DEMO_KEY') {
+      window.appConfig.weather.apiKey = 'DEMO_KEY';
+    }
     
     // Collect Workspaces from DOM
     const newBookmarks = [];
