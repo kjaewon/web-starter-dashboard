@@ -614,3 +614,45 @@ h2 {
   font-size: 0.7rem;
   color: var(--text-muted);
 }
+
+/* Mobile Responsiveness Improvements */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 1.25rem;
+    gap: 1rem;
+    width: 95%;
+    text-align: center;
+  }
+  .info-widget {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .weather-display {
+    text-align: center;
+    align-items: center;
+  }
+  .dashboard-grid {
+    width: 95%;
+    gap: 1.5rem;
+    margin: 0 auto 1.5rem;
+  }
+  .main-widgets-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+  .glass-panel {
+    padding: 1.5rem;
+  }
+  .search-form {
+    flex-direction: column;
+  }
+  .settings-modal-content {
+    width: 95%;
+    margin: 5% auto;
+    padding: 1.5rem;
+  }
+  .time-text {
+    font-size: 2.5rem;
+  }
+}
