@@ -6,9 +6,10 @@ export async function initSettings(user) {
       .from('user_settings')
       .select('config')
       .eq('user_id', user.id)
-      .single();
+      .limit(1)
+      .maybeSingle();
 
-    if (error && error.code === 'PGRST116') {
+    if (!data && !error) {
       const defaultRes = await fetch('./config.json');
       const defaultConfig = await defaultRes.json();
       
@@ -16,7 +17,8 @@ export async function initSettings(user) {
         .from('user_settings')
         .insert([{ user_id: user.id, config: defaultConfig }])
         .select()
-        .single();
+        .limit(1)
+        .maybeSingle();
         
       if (insertError) throw insertError;
       data = insertData;
