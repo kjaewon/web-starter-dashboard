@@ -2,7 +2,6 @@ import { supabase } from './supabase.js';
 
 export async function initSettings(user) {
   try {
-    // Check if user has settings
     let { data, error } = await supabase
       .from('user_settings')
       .select('config')
@@ -10,7 +9,6 @@ export async function initSettings(user) {
       .single();
 
     if (error && error.code === 'PGRST116') {
-      // No rows found -> Import default config from local config.json and save to Supabase
       const defaultRes = await fetch('./config.json');
       const defaultConfig = await defaultRes.json();
       
@@ -26,14 +24,12 @@ export async function initSettings(user) {
       throw error;
     }
 
-    // Set globally
+    if (!data) throw new Error("데이터가 생성되지 않았습니다.");
     window.appConfig = data.config;
-    
-    // Dispatch event so widgets can render
     document.dispatchEvent(new Event('configLoaded'));
   } catch (err) {
     console.error('Error loading settings from Supabase:', err);
-    // Fallback to local config.json if offline or error
+    alert('DB 로드 에러 (Supabase 연동 문제):\n' + (err.message || JSON.stringify(err)));
     const req = await fetch('./config.json');
     window.appConfig = await req.json();
     document.dispatchEvent(new Event('configLoaded'));
@@ -45,10 +41,18 @@ export async function saveSettings(newConfig) {
   const { data: { user } } = await supabase.auth.getUser();
   
   if (user) {
-    await supabase
+    const { data, error } = await supabase
       .from('user_settings')
       .update({ config: newConfig })
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
+      .select();
+      
+    if (error) {
+      alert('DB 저장 에러:\n' + error.message);
+    } else if (!data || data.length === 0) {
+      // 0 rows updated means row doesn't exist or RLS blocked update
+      alert('저장 실패: 테이블에 현재 사용자의 행이 없거나 권한이 막혀있습니다.');
+    }
   }
 }
 
